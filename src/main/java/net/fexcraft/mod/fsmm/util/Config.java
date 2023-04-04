@@ -1,6 +1,5 @@
 package net.fexcraft.mod.fsmm.util;
 
-import java.beans.EventHandler;
 import java.io.File;
 import java.util.TreeMap;
 
@@ -18,7 +17,6 @@ import net.fexcraft.mod.fsmm.impl.GenericMoneyItem;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.loading.FMLPaths;
 
 public class Config {
