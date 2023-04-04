@@ -5,20 +5,20 @@ import java.util.List;
 import net.fexcraft.lib.mc.utils.Print;
 import net.fexcraft.mod.fsmm.FSMM;
 import net.fexcraft.mod.fsmm.api.Money;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
+import net.minecraft.commands.CommandSource;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 
 public class ItemManager {
 	
-	public static long countInInventory(ICommandSender sender){
-		return sender instanceof EntityPlayer ? countInInventory((EntityPlayer)sender) : -1;
+	public static long countInInventory(CommandSource sender){
+		return sender instanceof Player ? countInInventory((Player)sender) : -1;
 	}
 	
-	public static long countInInventory(EntityPlayer player){
+	public static long countInInventory(Player player){
 		long value = 0l;
-		for(ItemStack stack : player.inventory.mainInventory){
+		for(ItemStack stack : player.getInventory().items){
 			if(stack.isEmpty()) continue;
 			long worth = Config.getItemStackWorth(stack);
 			Print.debug(stack.toString(), stack.getItem() instanceof Money.Item ? ((Money.Item)stack.getItem()).getType().toString() : "not internal money item");
@@ -27,9 +27,9 @@ public class ItemManager {
 		return value;
 	}
 	
-	public static boolean hasSpace(EntityPlayer player, boolean countMoneyItemAsSpace){
+	public static boolean hasSpace(Player player, boolean countMoneyItemAsSpace){
 		int i = 0;
-		for(ItemStack stack : player.inventory.mainInventory){
+		for(ItemStack stack : player.getInventory().items){
 			while(i >= 1) break;
 			if(stack.isEmpty()){
 				i++;
@@ -44,14 +44,14 @@ public class ItemManager {
 		return i > 0;
 	}
 	
-	public static long addToInventory(EntityPlayer player, long amount){
+	public static long addToInventory(Player player, long amount){
 		return setInInventory(player, (amount += countInInventory(player)) > Long.MAX_VALUE ? Long.MAX_VALUE : amount);
 	}
 
-	public static long removeFromInventory(EntityPlayer player, long amount){
+	public static long removeFromInventory(Player player, long amount){
 		long old = countInInventory(player);
 		old -= amount; if(old < 0){ amount += old; old = 0; }
-		for(ItemStack stack : player.inventory.mainInventory){
+		for(ItemStack stack : player.getInventory().items){
 			if(stack.isEmpty()) continue;
 			if(Config.getItemStackWorth(stack) > 0){
 				stack.shrink(64);
@@ -61,8 +61,8 @@ public class ItemManager {
 		return amount;
 	}
 	
-	public static long setInInventory(EntityPlayer player, long amount){
-		for(ItemStack stack : player.inventory.mainInventory){
+	public static long setInInventory(Player player, long amount){
+		for(ItemStack stack : player.getInventory().items){
 			if(stack.isEmpty()) continue;
 			if(Config.getItemStackWorth(stack) > 0){
 				stack.shrink(64);
@@ -75,10 +75,10 @@ public class ItemManager {
 			while(amount - (money = list.get(i)).getWorth() >= 0){
 				ItemStack stack = money.getItemStack().copy();
 				if(hasSpace(player, false)){
-					player.inventory.addItemStackToInventory(stack);
+					player.getInventory().add(stack);
 				}
 				else{
-					player.getEntityWorld().spawnEntity(new EntityItem(player.getEntityWorld(), player.posX, player.posY, player.posZ, stack));
+					player.level.addFreshEntity(new ItemEntity(player.level, player.position().x, player.position().y, player.position().z, stack));
 				}
 				amount -= money.getWorth();
 			}
