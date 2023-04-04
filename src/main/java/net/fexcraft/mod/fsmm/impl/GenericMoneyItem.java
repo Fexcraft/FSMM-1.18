@@ -3,10 +3,8 @@ package net.fexcraft.mod.fsmm.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 
 import net.fexcraft.mod.fsmm.api.Money;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
