@@ -1,6 +1,9 @@
 package net.fexcraft.mod.fsmm;
 
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import com.mojang.logging.LogUtils;
 import net.fexcraft.mod.fsmm.api.Money;
@@ -61,6 +64,12 @@ public class FSMM {
             //
         }
 
+    }
+
+    public static List<Money> getSortedMoneyList(){
+        return CURRENCY.values().stream().sorted(new Comparator<Money>(){
+            @Override public int compare(Money o1, Money o2){ return o1.getWorth() < o2.getWorth() ? 1 : -1; }
+        }).collect(Collectors.toList());
     }
 
 }
